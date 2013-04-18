@@ -104,7 +104,7 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			add_settings_field('image_padding', 'Image padding', array(&$this, 'image_padding_fn'), __FILE__, 'css_inline_section');
 			add_settings_field('image_border_colour', 'Image border colour', array(&$this, 'image_border_colour_fn'), __FILE__, 'css_inline_section');
 			add_settings_field('image_border_width', 'Image border width', array(&$this, 'image_border_width_fn'), __FILE__, 'css_inline_section');
-			echo "<div class='ehive-options-demo-image'><img src='/wp-content/plugins/eHiveAccountDetails/images/grid_item.png' /></div>";
+			echo "<div class='ehive-options-demo-image'><img src='/wp-content/plugins/ehive-objects-image-grid/images/grid_item.png' /></div>";
 		}
 		
 		/**********************
