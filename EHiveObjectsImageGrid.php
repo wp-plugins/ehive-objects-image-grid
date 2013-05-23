@@ -492,6 +492,7 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 			$siteType = $eHiveAccess->getSiteType();
 			$accountId = $eHiveAccess->getAccountId();
 			$communityId = $eHiveAccess->getCommunityId();
+			$searchPrivateRecords = $eHiveAccess->getSearchPrivateRecords();
 			
 			// Default the shortcode attributes to the options settings.
 			extract(shortcode_atts(array('image_size'	=> array_key_exists('image_size', $options) ? $options['image_size'] : 'TS',
@@ -537,7 +538,11 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 							
 							switch($siteType){
 								case 'Account':
-									$objectRecordsCollection = $eHiveApi->getObjectRecordsInAccount($accountId, $query, true, $sort, $direction, 0, $limit);
+									if ($searchPrivateRecords) {
+										$objectRecordsCollection = $eHiveApi->getObjectRecordsInAccount($accountId, $query, true, $sort, $direction, 0, $limit, 'any');
+									} else {
+										$objectRecordsCollection = $eHiveApi->getObjectRecordsInAccount($accountId, $query, true, $sort, $direction, 0, $limit, 'public' );
+									}
 									break;
 								case 'Community':
 									$objectRecordsCollection = $eHiveApi->getObjectRecordsInCommunity($communityId, $query, true, $sort, $direction, 0, $limit);
@@ -554,7 +559,11 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 							
 							switch($siteType){
 							case 'Account':
-								$objectRecordsCollection = $eHiveApi->getInterestingObjectRecordsInAccount($accountId, "", true, 0, $limit);
+								if ($searchPrivateRecords) {
+									$objectRecordsCollection = $eHiveApi->getInterestingObjectRecordsInAccount($accountId, "", true, 0, $limit, 'any');
+								} else {
+									$objectRecordsCollection = $eHiveApi->getInterestingObjectRecordsInAccount($accountId, "", true, 0, $limit, 'public');
+								}
 								break;
 							case 'Community':
 								$objectRecordsCollection = $eHiveApi->getInterestingObjectRecordsInCommunity($communityId, "", true, 0, $limit);
@@ -571,7 +580,11 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 							
 							switch($siteType){
 							case 'Account':
-								$objectRecordsCollection = $eHiveApi->getPopularObjectRecordsInAccount($accountId, "", true, 0, $limit);
+								if ($searchPrivateRecords) {
+									$objectRecordsCollection = $eHiveApi->getPopularObjectRecordsInAccount($accountId, "", true, 0, $limit, 'any');
+								} else {
+									$objectRecordsCollection = $eHiveApi->getPopularObjectRecordsInAccount($accountId, "", true, 0, $limit, 'public');
+								}
 								break;
 							case 'Community':
 								$objectRecordsCollection = $eHiveApi->getPopularObjectRecordsInCommunity($communityId, "", true, 0, $limit);
@@ -588,7 +601,11 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 						
 							switch($siteType){
 							case 'Account':
-								$objectRecordsCollection = $eHiveApi->getRecentObjectRecordsInAccount($accountId, "", true, 0, $limit);
+								if ($searchPrivateRecords) {
+									$objectRecordsCollection = $eHiveApi->getRecentObjectRecordsInAccount($accountId, "", true, 0, $limit, 'any');
+								} else {
+									$objectRecordsCollection = $eHiveApi->getRecentObjectRecordsInAccount($accountId, "", true, 0, $limit, 'public');
+								}
 								break;
 							case 'Community':
 								$objectRecordsCollection = $eHiveApi->getRecentObjectRecordsInCommunity($communityId, "", true, 0, $limit);
