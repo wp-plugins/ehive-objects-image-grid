@@ -27,7 +27,6 @@ if (!isset($eHiveApiErrorMessage)) {
 	$imageInlineStyleEnabled = false;
 	$itemInlineStyle = '';
 	$imageInlineStyle = '';
-	$columns = $options['columns'];
 	
 	if (isset($columns) && $columns > 0) {
 		$sectionWidth = 100.0/$columns;
@@ -38,26 +37,26 @@ if (!isset($eHiveApiErrorMessage)) {
 		$itemInlineStyleEnabled = true;
 	}
 	
-	if (isset($options['item_background_colour_enabled']) && $options['item_background_colour_enabled'] == 'on') {
-		$itemInlineStyle .= "background-color:{$options['item_background_colour']}; "; 
+	if (isset($item_background_colour_enabled) && $item_background_colour_enabled == 'on') {
+		$itemInlineStyle .= "background-color:{$item_background_colour}; "; 
 		$itemInlineStyleEnabled = true; 
 	}
-	if (isset($options['item_border_colour_enabled']) && $options['item_border_colour_enabled'] == 'on') {
-		$itemInlineStyle .= "border-style:solid; border-color:{$options['item_border_colour']}; ";
-		$itemInlineStyle .= "border-width:{$options['item_border_width']}px; *margin:-{$options['item_border_width']}px; "; 
+	if (isset($item_border_colour_enabled) && $item_border_colour_enabled == 'on') {
+		$itemInlineStyle .= "border-style:solid; border-color:{$item_border_colour}; ";
+		$itemInlineStyle .= "border-width:{$item_border_width}px; *margin:-{$item_border_width}px; "; 
 		$itemInlineStyleEnabled = true; 
 	}
-	if (isset($options['image_background_colour_enabled']) && $options['image_background_colour_enabled'] == 'on') {
-		$imageInlineStyle .= "background:{$options['image_background_colour']}; ";
+	if (isset($image_background_colour_enabled) && $image_background_colour_enabled == 'on') {
+		$imageInlineStyle .= "background:{$image_background_colour}; ";
 		$imageInlineStyleEnabled = true; 
 	}
-	if (isset($options['image_padding_enabled']) && $options['image_padding_enabled'] == 'on') {
-		$imageInlineStyle .= "padding:{$options['image_padding']}px; ";
+	if (isset($image_padding_enabled) && $image_padding_enabled == 'on') {
+		$imageInlineStyle .= "padding:{$image_padding}px; ";
 		$imageInlineStyleEnabled = true;
 	}
-	if (isset($options['image_border_colour_enabled']) && $options['image_border_colour_enabled'] == 'on') {
-		$imageInlineStyle .= "border-style:solid; border-color:{$options['image_border_colour']}; "; 
-		$imageInlineStyle .= "border-width:{$options['image_border_width']}px; "; 
+	if (isset($image_border_colour_enabled) && $image_border_colour_enabled == 'on') {
+		$imageInlineStyle .= "border-style:solid; border-color:{$image_border_colour}; "; 
+		$imageInlineStyle .= "border-width:{$image_border_width}px; "; 
 		$imageInlineStyleEnabled = true; 
 	}
 		

@@ -3,8 +3,8 @@ Contributors: vernonsystems
 Donate link:http://ehive.com/what_is_ehive
 Tags: ehive, collection, museum, archive, history
 Requires at least: 3.3.1
-Tested up to: 3.5.1
-Stable tag: 2.1.2
+Tested up to: 3.9.2
+Stable tag: 2.1.3
 License: GPL2+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,11 @@ There are three ways to install a plugin:
 4. Click the "Activate plugin" link below the plugin's name
 
 == Changelog ==
+= 2.1.3 =
+* Bug fix, defaulting of shortcode attributes from options for columns, image_size and search_term corrected.
+* Added version control for plugin options. Defaulting of new options without changing existing options is now possible.
+* Added uninstall script to remove options from the database when the plugin is deleted. 
+
 = 2.1.2 =
 * Allow public, private and any content for interesting, popular and recent searches.
 
@@ -87,6 +92,11 @@ There are three ways to install a plugin:
 * First stable release of the eHive Access plugin. 
 
 == Upgrade Notice ==
+= 2.1.3 =
+* Bug fix, defaulting of shortcode attributes from options for columns, image_size and search_term corrected.
+* Added version control for plugin options. Defaulting of new options without changing existing options is now possible.
+* Added uninstall script to remove options from the database when the plugin is deleted. 
+
 = 2.1.2 =
 * Allow public, private and any content for interesting, popular and recent searches.
 

@@ -4,7 +4,7 @@
 	Plugin URI: http://developers.ehive.com/wordpress-plugins/
 	Author: Vernon Systems limited
 	Description: A grid of eHive Object images. The <a href="http://developers.ehive.com/wordpress-plugins#ehiveaccess" target="_blank">eHiveAccess plugin</a> must be installed.
-	Version: 2.1.2
+	Version: 2.1.3
 	Author URI: http://vernonsystems.com
 	License: GPL2+
 */
@@ -28,7 +28,10 @@
 if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins', array()))) {
 
 	class EHiveObjectsImageGrid {
-
+		
+		const CURRENT_VERSION = 1; // Increment each time an upgrade is required / options added or deleted.
+		const EHIVE_OBJECTS_IMAGE_GRID_OPTIONS = "ehive_objects_image_grid_options";
+		
 		function __construct() {
 
 			add_action("admin_init", array(&$this, "ehive_objects_image_grid_admin_options_init"));			 
@@ -40,10 +43,9 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			add_shortcode('ehive_objects_image_grid', array(&$this, 'ehive_objects_image_grid_shortcode'));
 		}
 
-		/*
-		 * Admin init
-		 */
 		function ehive_objects_image_grid_admin_options_init() {
+			
+			$this->ehive_plugin_update();
 				
 			wp_enqueue_script( 'jquery' );
 				
@@ -65,17 +67,11 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 				
 		}
 		
-		/*
-		 * Validation
-		*/
 		function plugin_options_validate($input) {
 			add_settings_error('ehive_objects_image_grid_options', 'updated', 'eHive Object Image Grid settings saved.', 'updated');
 			return $input;
 		}
 		
-		/*
-		 * Options page content
-		 */
 		function  comment_section_fn() {
 			echo "<p><em>An overview of the plugin and shortcode documentation is available in the help.</em></p>";
 		}
@@ -107,9 +103,6 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			echo "<div class='ehive-options-demo-image'><img src='/wp-content/plugins/ehive-objects-image-grid/images/grid_item.png' /></div>";
 		}
 		
-		/**********************
-		 * IMAGE GRID SECTION *
-		**********************/
 		function  image_size_fn() {
 			$options = get_option('ehive_objects_image_grid_options');
 			$imageSize = $options['image_size'];
@@ -191,9 +184,6 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			echo '<p><em>A sort direction must be selected if a "Sort by" field is selected.</em></p>';
 		}
 		
-		/***************
-		 * CSS SECTION *
-		 ***************/
 		function plugin_css_enabled_fn() {
 			$options = get_option('ehive_objects_image_grid_options');
 			if(isset($options['plugin_css_enabled']) && $options['plugin_css_enabled'] == 'on') {
@@ -220,9 +210,6 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			echo '<p>Adds a class name to the ehive-objects-image-grid div.';
 		}
 		
-		/**************
-		 * CSS INLINE *
-		 **************/
 		function item_background_colour_fn() {
 			$options = get_option('ehive_objects_image_grid_options');
 			if(isset($options['item_background_colour_enabled']) && $options['item_background_colour_enabled'] == 'on') {
@@ -295,9 +282,6 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			echo "<input class='small-text' id='image_border_width' name='ehive_objects_image_grid_options[image_border_width]' type='number' value='{$options['image_border_width']}' />";
 		}
 		
-		/*
-		 * Admin menu setup
-		 */
 		function ehive_objects_image_grid_admin_menu() {
 
 			global $ehive_objects_image_grid_options_page;
@@ -312,9 +296,6 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			
 		}
 		
-		/*
-		 * Options page setup
-		*/
 		function ehive_objects_image_grid_options_page() {
 			?>
 		    <div class="wrap">
@@ -332,25 +313,16 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			<?php
 		}
 		
-		/*
-		 * Admin menu link
-		 */
 		function ehive_objects_image_grid_plugin_action_links($links, $file) {
 			$settings_link = '<a href="admin.php?page=ehive_objects_image_grid">' . __('Settings') . '</a>';
 			array_unshift($links, $settings_link); // before other links
 			return $links;
 		}
 		
-		/*
-		 * Add admin stylesheet
-		 */
 		function ehive_objects_image_grid_admin_enqueue_styles() {
 			wp_enqueue_style('eHiveAdminCSS');
 		}
 		
-		/*
-		 * Plugin options help setup
-		 */
 		function ehive_objects_image_grid_options_help() {
 			global $ehive_objects_image_grid_options_page;
 
@@ -469,9 +441,6 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 			
 		}
 
-		/*
-		 * Add stylesheet
-		 */
 		public function enqueue_styles() {
 			$options = get_option('ehive_objects_image_grid_options');
 			if ($options[plugin_css_enabled] == 'on') {
@@ -480,9 +449,6 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 			}
 		}
 		
-		/*
-		 * Shortcode setup
-		 */
 		public function ehive_objects_image_grid_shortcode($atts) {
 			
 			global $eHiveAccess;
@@ -495,15 +461,15 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 			$searchPrivateRecords = $eHiveAccess->getSearchPrivateRecords();
 			
 			// Default the shortcode attributes to the options settings.
-			extract(shortcode_atts(array('image_size'	=> array_key_exists('image_size', $options) ? $options['image_size'] : 'TS',
-										 'name_enabled'	=> array_key_exists('name_enabled', $options) ? $options['name_enabled'] : '',
-										 'explore_type'	=> array_key_exists('explore_type', $options) ? $options['explore_type'] : 'recent',
-										 'search_term'	=> array_key_exists('search_term', $options) ? $options['search_term'] : '',
-										 'sort_type'	=> array_key_exists('sort_type', $options) ? $options['sort_type'] : '',
-										 'direction'	=> array_key_exists('direction', $options) ? $options['direction'] : 'asc',
-										 'rows'			=> array_key_exists('rows', $options) ? $options['rows'] : '3', 
-										 'columns'		=> array_key_exists('columns', $options) ? $options['columns'] : '7',
-										 'css_class'	=> array_key_exists('css_class', $options) ? $options['css_class'] : '',
+			extract(shortcode_atts(array('image_size'						=> array_key_exists('image_size', $options) ? $options['image_size'] : 'TS',
+										 'name_enabled'						=> array_key_exists('name_enabled', $options) ? $options['name_enabled'] : '',
+										 'explore_type'						=> array_key_exists('explore_type', $options) ? $options['explore_type'] : 'recent',
+										 'search_term'						=> array_key_exists('search_term', $options) ? $options['search_term'] : '',
+										 'sort_type'						=> array_key_exists('sort_type', $options) ? $options['sort_type'] : '',
+										 'direction'						=> array_key_exists('direction', $options) ? $options['direction'] : 'asc',
+										 'rows'								=> array_key_exists('rows', $options) ? $options['rows'] : '3', 
+										 'columns'							=> array_key_exists('columns', $options) ? $options['columns'] : '7',
+										 'css_class'						=> array_key_exists('css_class', $options) ? $options['css_class'] : '',
 										 'item_background_colour'			=> array_key_exists('item_background_colour', $options) ? $options['item_background_colour'] : '#f3f3f3',
 										 'item_background_colour_enabled'	=> array_key_exists('item_background_colour_enabled', $options) ? $options['item_background_colour_enabled'] : 'on',
 										 'item_border_colour'				=> array_key_exists('item_border_colour', $options) ? $options['item_border_colour'] : '#666666',
@@ -527,14 +493,16 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 							
 							$eHiveApi = $eHiveAccess->eHiveApi();
 							
-							$query = $options['search_term'];
+							$query = $search_term;
 							
-							if (isset($options['sort_type']) && $options['sort_type'] != 0) {
-								$sort = $options['sort_type'];
-							}
-							if (isset($options['sort_direction']) && $options['sort_direction'] != 0) {
-								$direction = $options['sort_direction'];
-							} 
+							//if (isset($options['sort_type']) && $options['sort_type'] != 0) {
+							//	$sort = $options['sort_type'];
+							//}
+							//if (isset($options['sort_direction']) && $options['sort_direction'] != 0) {
+							//	$direction = $options['sort_direction'];
+							//}
+							$sort = $sort_type;
+							$direction = $sort_direction; 
 							
 							switch($siteType){
 								case 'Account':
@@ -624,7 +592,7 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 					}
 				}
 				
-			$imageSize = 'image_' . strtolower($options['image_size']);
+			$imageSize = 'image_' . strtolower($image_size);
 	
 			$templateToFind = 'eHiveObjectsImageGrid.php' ;
 			
@@ -637,47 +605,77 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 			require($template);
 			return apply_filters('ehive_objects_image_grid', ob_get_clean());
 		}
-							
-		/*
-		 * On plugin activate
-		 */
-		public function activate() {
-			$arr = array("image_size"=>"TS",
-						 "name_enabled"=>'',
-						 "explore_type"=>"recent",
-						 "search_term"=>"",
-						 "sort_type"=>"",
-						 "direction"=>"asc",
-						 "plugin_css_enabled"=>"on",
-						 "rows"=>"3",
-						 "columns"=>"7",
-						 "css_class"=>"",
-						 "item_background_colour"=>"#f3f3f3",
-						 "item_background_colour_enabled"=>'on',
-						 "item_border_colour"=>"#666666",
-						 "item_border_colour_enabled"=>'',
-						 "item_border_width"=>"2",
-						 "image_background_colour"=>"#ffffff",
-						 "image_background_colour_enabled"=>'on',
-						 "image_padding"=>"1",
-						 "image_padding_enabled"=>"on",
-						 "image_border_colour"=>"#666666",
-						 "image_border_colour_enabled"=>'',
-						 "image_border_width"=>"2" );
+
 		
-			update_option('ehive_objects_image_grid_options', $arr);		
+		//
+		//	Setup the plugin options, handle upgrades to the plugin.
+		//
+		function ehive_plugin_update() {
+			
+			// Add the default options.
+			if ( get_option(self::EHIVE_OBJECTS_IMAGE_GRID_OPTIONS) === false ) {
+			
+				$options = array("update_version"=>self::CURRENT_VERSION,
+								 "image_size"=>"TS",
+								 "name_enabled"=>'',
+								 "explore_type"=>"recent",
+								 "search_term"=>"",
+								 "sort_type"=>"",
+								 "direction"=>"asc",
+								 "plugin_css_enabled"=>"on",
+								 "rows"=>"3",
+								 "columns"=>"7",
+								 "css_class"=>"",
+								 "item_background_colour"=>"#f3f3f3",
+								 "item_background_colour_enabled"=>'on',
+								 "item_border_colour"=>"#666666",
+								 "item_border_colour_enabled"=>'',
+								 "item_border_width"=>"2",
+								 "image_background_colour"=>"#ffffff",
+								 "image_background_colour_enabled"=>'on',
+								 "image_padding"=>"1",
+								 "image_padding_enabled"=>"on",
+								 "image_border_colour"=>"#666666",
+								 "image_border_colour_enabled"=>'',
+								 "image_border_width"=>"2");
+					
+				update_option(self::EHIVE_OBJECTS_IMAGE_GRID_OPTIONS, $options);
+				 
+			} else {
+			
+				$options = get_option(self::EHIVE_OBJECTS_IMAGE_GRID_OPTIONS);
+			
+				if ( array_key_exists("update_version", $options)) {
+					$updateVersion = $options["update_version"];
+				} else {
+					$updateVersion = 0;
+				}
+			
+				if ( $updateVersion == self::CURRENT_VERSION ) {
+					// Nothing to do.
+				}  else {
+			
+					if ( $updateVersion == 0 ) {
+						$updateVersion = 1;
+					}
+			
+					// End of the update chain, save the options to the database.
+					$options["update_version"] = self::CURRENT_VERSION;
+					update_option(self::EHIVE_OBJECTS_IMAGE_GRID_OPTIONS, $options);
+				}
+			}			
+		}
+				
+		public function activate() {			
 		}
 		
-		/*
-		 * On plugin deactivate
-		 */
-		public function deactivate() {
-			delete_option('ehive_objects_image_grid_options');
+		public function deactivate() {			
 		}
+		
 	}
 	
 	$eHiveObjectsImageGrid = new EHiveObjectsImageGrid();
-		
+			
 	add_action('activate_ehive-objects-image-grid/EHiveObjectsImageGrid.php', array(&$eHiveObjectsImageGrid, 'activate'));
 	add_action('deactivate_ehive-objects-image-grid/EHiveObjectsImageGrid.php', array(&$eHiveObjectsImageGrid, 'deactivate'));
 }
