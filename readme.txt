@@ -80,6 +80,10 @@ There are three ways to install a plugin:
 4. Click the "Activate plugin" link below the plugin's name
 
 == Changelog ==
+= 2.1.4 =
+* Bug fix with sort and direction terms in the shortcode attributes.
+* A valid short code with a search term and sort  [ehive_objects_image_grid explore_type="all" search_term='maker:Fred' sort="name" direction="desc"] 
+
 = 2.1.3 =
 * Bug fix, defaulting of shortcode attributes from options for columns, image_size and search_term corrected.
 * Added version control for plugin options. Defaulting of new options without changing existing options is now possible.
@@ -92,6 +96,10 @@ There are three ways to install a plugin:
 * First stable release of the eHive Access plugin. 
 
 == Upgrade Notice ==
+= 2.1.4 =
+* Bug fix, error processing the sort and direction terms in the shortcode fixed. 
+* A valid short code with a search term and sort  [ehive_objects_image_grid explore_type="all" search_term='maker:Fred' sort="name" direction="desc"] 
+
 = 2.1.3 =
 * Bug fix, defaulting of shortcode attributes from options for columns, image_size and search_term corrected.
 * Added version control for plugin options. Defaulting of new options without changing existing options is now possible.

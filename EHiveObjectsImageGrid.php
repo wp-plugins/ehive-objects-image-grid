@@ -4,7 +4,7 @@
 	Plugin URI: http://developers.ehive.com/wordpress-plugins/
 	Author: Vernon Systems limited
 	Description: A grid of eHive Object images. The <a href="http://developers.ehive.com/wordpress-plugins#ehiveaccess" target="_blank">eHiveAccess plugin</a> must be installed.
-	Version: 2.1.3
+	Version: 2.1.4
 	Author URI: http://vernonsystems.com
 	License: GPL2+
 */
@@ -81,8 +81,8 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			add_settings_field('name_enabled', 'Display the name/title', array(&$this, 'name_enabled_fn'), __FILE__, 'image_grid_section');
 			add_settings_field('explore_type', 'Explore type', array(&$this, 'explore_type_fn'), __FILE__, 'image_grid_section');
 			add_settings_field('search_term', 'Search term', array(&$this, 'search_term_fn'), __FILE__, 'image_grid_section');
-			add_settings_field('sort_type', 'Sort by', array(&$this, 'sort_type_fn'), __FILE__, 'image_grid_section');
-			add_settings_field('sort_direction', 'Sort direction', array(&$this, 'sort_direction_fn'), __FILE__, 'image_grid_section');
+			add_settings_field('sort', 'Sort by', array(&$this, 'sort_fn'), __FILE__, 'image_grid_section');
+			add_settings_field('direction', 'Sort direction', array(&$this, 'direction_fn'), __FILE__, 'image_grid_section');
 		}
 		
 		function  css_section_fn() {
@@ -147,7 +147,7 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 			echo "<input class='regular-text' id='search_term' name='ehive_objects_image_grid_options[search_term]' type='text' value='{$options['search_term']}' />";
 		}
 		
-		function  sort_type_fn() {
+		function  sort_fn() {
 			$options = get_option('ehive_objects_image_grid_options');
 			$items = array(	'',
 							'named_collection' => 'Collection',
@@ -162,26 +162,26 @@ if (in_array('ehive-access/EHiveAccess.php', (array) get_option('active_plugins'
 						   	'series_title' => 'Series Title',
 							'taxonomic_classification' => 'Taxonomic Classification');
 		
-			echo "<select id='sort_type' name='ehive_objects_image_grid_options[sort_type]'>";
+			echo "<select id='sort' name='ehive_objects_image_grid_options[sort]'>";
 			foreach($items as $item => $key) {
-				$selected = ($options['sort_type']==$item) ? 'selected="selected"' : '';
+				$selected = ($options['sort']==$item) ? 'selected="selected"' : '';
 				echo "<option value='$item' $selected>$key</option>";
 			}
 			echo "</select>";
 		}
 		
-		function  sort_direction_fn() {
+		function  direction_fn() {
 			$options = get_option('ehive_objects_image_grid_options');
 			$items = array(	'asc' => "A-Z",
 							'desc' => "Z-A");
 					
-			echo "<select id='sort_direction' name='ehive_objects_image_grid_options[sort_direction]'>";
+			echo "<select id='direction' name='ehive_objects_image_grid_options[direction]'>";
 			foreach($items as $item => $key) {
-				$selected = ($options['sort_direction']==$item) ? 'selected="selected"' : '';
+				$selected = ($options['direction']==$item) ? 'selected="selected"' : '';
 				echo "<option value='$item' $selected>$key</option>";
 			}
 			echo "</select>";
-			echo '<p><em>A sort direction must be selected if a "Sort by" field is selected.</em></p>';
+			echo '<p><em>If explore type is "All" then both "Sort by" and "Sort direction" must have values selected.</em></p>';
 		}
 		
 		function plugin_css_enabled_fn() {
@@ -465,7 +465,7 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 										 'name_enabled'						=> array_key_exists('name_enabled', $options) ? $options['name_enabled'] : '',
 										 'explore_type'						=> array_key_exists('explore_type', $options) ? $options['explore_type'] : 'recent',
 										 'search_term'						=> array_key_exists('search_term', $options) ? $options['search_term'] : '',
-										 'sort_type'						=> array_key_exists('sort_type', $options) ? $options['sort_type'] : '',
+										 'sort'								=> array_key_exists('sort', $options) ? $options['sort'] : '',
 										 'direction'						=> array_key_exists('direction', $options) ? $options['direction'] : 'asc',
 										 'rows'								=> array_key_exists('rows', $options) ? $options['rows'] : '3', 
 										 'columns'							=> array_key_exists('columns', $options) ? $options['columns'] : '7',
@@ -494,16 +494,7 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 							$eHiveApi = $eHiveAccess->eHiveApi();
 							
 							$query = $search_term;
-							
-							//if (isset($options['sort_type']) && $options['sort_type'] != 0) {
-							//	$sort = $options['sort_type'];
-							//}
-							//if (isset($options['sort_direction']) && $options['sort_direction'] != 0) {
-							//	$direction = $options['sort_direction'];
-							//}
-							$sort = $sort_type;
-							$direction = $sort_direction; 
-							
+														
 							switch($siteType){
 								case 'Account':
 									if ($searchPrivateRecords) {
@@ -620,7 +611,7 @@ div.ehive-objects-image-grid div.ehive-image-grid div.ehive-item div.ehive-item-
 								 "name_enabled"=>'',
 								 "explore_type"=>"recent",
 								 "search_term"=>"",
-								 "sort_type"=>"",
+								 "sort"=>"",
 								 "direction"=>"asc",
 								 "plugin_css_enabled"=>"on",
 								 "rows"=>"3",
